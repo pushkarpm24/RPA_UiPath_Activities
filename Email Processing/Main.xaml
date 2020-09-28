@@ -1,0 +1,205 @@
+﻿<Activity mc:Ignorable="sap sap2010 sads" x:Class="Main" mva:VisualBasic.Settings="{x:Null}" sap2010:WorkflowViewState.IdRef="Main_1"
+ xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities"
+ xmlns:av="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+ xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities"
+ xmlns:sads="http://schemas.microsoft.com/netfx/2010/xaml/activities/debugger"
+ xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
+ xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
+ xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib"
+ xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+ xmlns:snm="clr-namespace:System.Net.Mail;assembly=System"
+ xmlns:ui="http://schemas.uipath.com/workflow/activities"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>System.Activities.XamlIntegration</x:String>
+      <x:String>System.Activities.Validation</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Diagnostics</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Net.Mail</x:String>
+      <x:String>System.Xml</x:String>
+      <x:String>System.Xml.Linq</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>System.Collections</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xml.Linq</AssemblyReference>
+      <AssemblyReference>PresentationFramework</AssemblyReference>
+      <AssemblyReference>WindowsBase</AssemblyReference>
+      <AssemblyReference>PresentationCore</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>System.ServiceModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.Composition</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <Flowchart DisplayName="Main" sap2010:WorkflowViewState.IdRef="Flowchart_1">
+    <Flowchart.Variables>
+      <Variable x:TypeArguments="x:Boolean" Name="NewTransaction" />
+      <Variable x:TypeArguments="scg:List(snm:MailMessage)" Name="listGmail" />
+    </Flowchart.Variables>
+    <Flowchart.StartNode>
+      <FlowStep x:Name="__ReferenceID2" sap2010:WorkflowViewState.IdRef="FlowStep_11">
+        <ui:Comment sap2010:WorkflowViewState.IdRef="Comment_2" Text="//Scenario description : Get all unread e-mails and redirect them based on their subject.&#xD;&#xA;The sample above sends e-mails with subject &quot;Andra&quot; to ciorici.andra@gmail.com. e-mails with subject &quot;Ionut&quot; to ionut@deskover.com and e-mails with subject &quot;Lavinia&quot; to &quot;Lavinia@deskover.com&quot;&#xD;&#xA;Trigger this workflow every time you receive an e-mail" />
+        <FlowStep.Next>
+          <FlowStep x:Name="__ReferenceID0" sap2010:WorkflowViewState.IdRef="FlowStep_9">
+            <ui:GetIMAPMailMessages TimeoutMS="{x:Null}" DeleteMessages="False" DisplayName="Get IMAP mail messages" Email="mihai.badita@deskperience.com" EnableSSL="True" sap2010:WorkflowViewState.IdRef="GetIMAPMailMessages_1" MailFolder="Inbox" MarkAsRead="True" Messages="[listGmail]" OnlyUnreadMessages="True" Password="password" Port="993" Server="imap.gmail.com" Top="30" />
+            <FlowStep.Next>
+              <FlowStep x:Name="__ReferenceID1" sap2010:WorkflowViewState.IdRef="FlowStep_10">
+                <If Condition="[Not listGmail is Nothing]" sap2010:WorkflowViewState.IdRef="If_1">
+                  <If.Then>
+                    <ui:ForEach x:TypeArguments="snm:MailMessage" DisplayName="For each&lt;mail message&gt;" sap2010:WorkflowViewState.IdRef="ForEach`1_3" Values="[listGmail]">
+                      <ui:ForEach.Body>
+                        <ActivityAction x:TypeArguments="snm:MailMessage">
+                          <ActivityAction.Argument>
+                            <DelegateInArgument x:TypeArguments="snm:MailMessage" Name="item" />
+                          </ActivityAction.Argument>
+                          <Sequence DisplayName="Body" sap2010:WorkflowViewState.IdRef="Sequence_7">
+                            <WriteLine DisplayName="Write line" sap2010:WorkflowViewState.IdRef="WriteLine_1" Text="[item.Subject]" />
+                            <ui:SaveMailAttachments Attachments="{x:Null}" FolderPath="{x:Null}" DisplayName="Save Attachments" sap2010:WorkflowViewState.IdRef="SaveMailAttachments_1" Message="[item]" />
+                            <If Condition="[item.Subject.Contains(&quot;Andra&quot;)]" sap2010:WorkflowViewState.IdRef="If_2">
+                              <If.Then>
+                                <ui:SendMail Bcc="{x:Null}" Cc="{x:Null}" From="{x:Null}" MailMessage="{x:Null}" Name="{x:Null}" TimeoutMS="{x:Null}" Body="[item.Body]" DisplayName="Send SMTP Mail Message" Email="mihai.badita@deskperience.com" EnableSSL="True" sap2010:WorkflowViewState.IdRef="SendMail_1" IsBodyHtml="False" Password="password" Port="587" Server="smtp.gmail.com" Subject="[item.Subject]" To="andra@uipath.com">
+                                  <ui:SendMail.Files>
+                                    <scg:List x:TypeArguments="InArgument(x:String)" Capacity="0" />
+                                  </ui:SendMail.Files>
+                                </ui:SendMail>
+                              </If.Then>
+                              <If.Else>
+                                <If Condition="[item.Subject.Contains(&quot;Ionut&quot;)]" sap2010:WorkflowViewState.IdRef="If_4">
+                                  <If.Then>
+                                    <ui:SendMail Bcc="{x:Null}" Cc="{x:Null}" From="{x:Null}" MailMessage="{x:Null}" Name="{x:Null}" TimeoutMS="{x:Null}" Body="[item.Body]" DisplayName="Send SMTP Mail Message" Email="mihai.badita@deskperience.com" EnableSSL="True" sap2010:WorkflowViewState.IdRef="SendMail_3" IsBodyHtml="False" Password="password" Port="587" Server="smtp.gmail.com" Subject="[item.Subject]" To="ionut@uipath.com">
+                                      <ui:SendMail.Files>
+                                        <scg:List x:TypeArguments="InArgument(x:String)" Capacity="0" />
+                                      </ui:SendMail.Files>
+                                    </ui:SendMail>
+                                  </If.Then>
+                                  <If.Else>
+                                    <If Condition="[item.Subject.Contains(&quot;Lavinia&quot;)]" sap2010:WorkflowViewState.IdRef="If_5">
+                                      <If.Then>
+                                        <ui:SendMail Bcc="{x:Null}" Cc="{x:Null}" From="{x:Null}" MailMessage="{x:Null}" Name="{x:Null}" TimeoutMS="{x:Null}" Body="[item.Body]" DisplayName="Send SMTP Mail Message" Email="mihai.badita@deskperience.com" EnableSSL="True" sap2010:WorkflowViewState.IdRef="SendMail_5" IsBodyHtml="False" Password="password" Port="587" Server="smtp.gmail.com" Subject="[item.Subject]" To="lavinia@uipath.com">
+                                          <ui:SendMail.Files>
+                                            <scg:List x:TypeArguments="InArgument(x:String)" Capacity="0" />
+                                          </ui:SendMail.Files>
+                                        </ui:SendMail>
+                                      </If.Then>
+                                    </If>
+                                  </If.Else>
+                                </If>
+                              </If.Else>
+                            </If>
+                          </Sequence>
+                        </ActivityAction>
+                      </ui:ForEach.Body>
+                    </ui:ForEach>
+                  </If.Then>
+                </If>
+              </FlowStep>
+            </FlowStep.Next>
+          </FlowStep>
+        </FlowStep.Next>
+      </FlowStep>
+    </Flowchart.StartNode>
+    <x:Reference>__ReferenceID0</x:Reference>
+    <x:Reference>__ReferenceID1</x:Reference>
+    <x:Reference>__ReferenceID2</x:Reference>
+    <sads:DebugSymbol.Symbol>dztDOlxVc2Vyc1xSYXp2YW5cRG9jdW1lbnRzXFVpUGF0aFxFbWFpbCBQcm9jZXNzaW5nXE1haW4ueGFtbDE2A30PAgEBPQk91QMCAT9ADUD9AgIBNkMRchYCAQJA9gJA+gICAT5AfECbAQIBPUDUAkDZAgIBPECTAkCgAgIBOkDhAkDxAgIBOUDEAkDOAgIBOEDwAUD3AQIBN0MfQzsCAQNFFXAiAgEFRaMBRbABAgE0SxttJgIBBkwdTIcBAgExTR1NzAECAS5OHWwiAgEHTHRMhAECATJNwQFNyQECAS9OK05XAgEIUCFULwIBJFchaiYCAQpQmQNQqwMCAS1QnAFQqQECAStQhQNQlQMCASlQ1QFQ9AECAShQ3wJQ5AICASdQ7AJQ/AICASZQzwJQ2QICASVXL1dbAgELWSVdMwIBGmAlaCoCAQ1ZnQNZrwMCASNZoAFZrQECASFZiQNZmQMCAR9Z2QFZ+AECAR5Z4wJZ6AICAR1Z8AJZgAMCARxZ0wJZ3QICARtgM2BhAgEOYilmNwIBEGKhA2K1AwIBGWKkAWKxAQIBF2KNA2KdAwIBFWLdAWL8AQIBFGLnAmLsAgIBE2L0AmKEAwIBEmLXAmLhAgIBEQ==</sads:DebugSymbol.Symbol>
+  </Flowchart>
+  <sap2010:WorkflowViewState.ViewStateManager>
+    <sap2010:ViewStateManager>
+      <sap2010:ViewStateData Id="Comment_2" sap:VirtualizedContainerService.HintSize="313.6,209.6">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="GetIMAPMailMessages_1" sap:VirtualizedContainerService.HintSize="200,22.4">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="WriteLine_1" sap:VirtualizedContainerService.HintSize="1139.2,62.4" />
+      <sap2010:ViewStateData Id="SaveMailAttachments_1" sap:VirtualizedContainerService.HintSize="1139.2,22.4" />
+      <sap2010:ViewStateData Id="SendMail_1" sap:VirtualizedContainerService.HintSize="313.6,148.8" />
+      <sap2010:ViewStateData Id="SendMail_3" sap:VirtualizedContainerService.HintSize="313.6,148.8" />
+      <sap2010:ViewStateData Id="SendMail_5" sap:VirtualizedContainerService.HintSize="313.6,148.8" />
+      <sap2010:ViewStateData Id="If_5" sap:VirtualizedContainerService.HintSize="464,299.2" />
+      <sap2010:ViewStateData Id="If_4" sap:VirtualizedContainerService.HintSize="801.6,449.6" />
+      <sap2010:ViewStateData Id="If_2" sap:VirtualizedContainerService.HintSize="1139.2,600" />
+      <sap2010:ViewStateData Id="Sequence_7" sap:VirtualizedContainerService.HintSize="1161.6,889.6">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ForEach`1_3" sap:VirtualizedContainerService.HintSize="1177.6,1024" />
+      <sap2010:ViewStateData Id="If_1" sap:VirtualizedContainerService.HintSize="200,52.8">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="FlowStep_10">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">260,494.02</av:Point>
+            <av:Size x:Key="ShapeSize">200,52.8</av:Size>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="FlowStep_9">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">260,418.8</av:Point>
+            <av:Size x:Key="ShapeSize">200,22.4</av:Size>
+            <av:PointCollection x:Key="ConnectorLocation">360,441.2 360,494.02</av:PointCollection>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="FlowStep_11">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">203.2,135.2</av:Point>
+            <av:Size x:Key="ShapeSize">313.6,209.6</av:Size>
+            <av:PointCollection x:Key="ConnectorLocation">360,344.8 360,418.8</av:PointCollection>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Flowchart_1" sap:VirtualizedContainerService.HintSize="737.6,636.8">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+            <av:Point x:Key="ShapeLocation">330,2.5</av:Point>
+            <av:Size x:Key="ShapeSize">60,75.2</av:Size>
+            <av:PointCollection x:Key="ConnectorLocation">360,77.7 360,135.2</av:PointCollection>
+            <x:Double x:Key="Width">724</x:Double>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Main_1" sap:VirtualizedContainerService.HintSize="777.6,716.8" />
+    </sap2010:ViewStateManager>
+  </sap2010:WorkflowViewState.ViewStateManager>
+</Activity>
